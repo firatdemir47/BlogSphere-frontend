@@ -1,14 +1,17 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import Navigation from '../component/Navigation'
+import { API_ENDPOINTS } from '../config/api'
 
 export default function Register() {
   const navigate = useNavigate()
   const [formData, setFormData] = useState({
-    name: '',
+    username: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    firstName: '',
+    lastName: ''
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -25,6 +28,21 @@ export default function Register() {
     setLoading(true)
     setError('')
 
+    // Form validation
+    if (!formData.username.trim() || !formData.email.trim() || !formData.password) {
+      setError('Kullanıcı adı, email ve şifre gerekli')
+      setLoading(false)
+      return
+    }
+
+    // Email format kontrolü
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(formData.email)) {
+      setError('Geçerli bir email adresi girin')
+      setLoading(false)
+      return
+    }
+
     // Şifre kontrolü
     if (formData.password !== formData.confirmPassword) {
       setError('Şifreler eşleşmiyor')
@@ -39,15 +57,17 @@ export default function Register() {
     }
 
     try {
-      const response = await fetch('http://localhost:3000/api/auth/register', {
+      const response = await fetch(API_ENDPOINTS.AUTH + '/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          name: formData.name,
+          username: formData.username,
           email: formData.email,
-          password: formData.password
+          password: formData.password,
+          firstName: formData.firstName,
+          lastName: formData.lastName
         })
       })
 
@@ -86,16 +106,44 @@ export default function Register() {
 
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
-              <label htmlFor="name">Ad Soyad</label>
+              <label htmlFor="username">Kullanıcı Adı</label>
               <input
                 type="text"
-                id="name"
-                name="name"
-                value={formData.name}
+                id="username"
+                name="username"
+                value={formData.username}
                 onChange={handleChange}
                 required
                 className="auth-input"
-                placeholder="Adınız ve soyadınız"
+                placeholder="Kullanıcı adınız"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="firstName">Ad</label>
+              <input
+                type="text"
+                id="firstName"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+                required
+                className="auth-input"
+                placeholder="Adınız"
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor="lastName">Soyad</label>
+              <input
+                type="text"
+                id="lastName"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                required
+                className="auth-input"
+                placeholder="Soyadınız"
               />
             </div>
 
