@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { API_ENDPOINTS } from '../config/api'
 import CommentForm from '../component/CommentForm'
+import CommentItem from '../component/CommentItem'
+import ViewCounter from '../component/ViewCounter'
 
 function estimateReadingMinutes(text) {
   const words = String(text ?? '').trim().split(/\s+/).filter(Boolean).length
@@ -14,9 +16,26 @@ export default function BlogDetail() {
   const [loading, setLoading] = useState(true)
   const [comments, setComments] = useState([])
   const [loadingComments, setLoadingComments] = useState(true)
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+    // Kullanıcı bilgisini al
+    const userData = localStorage.getItem('user')
+    if (userData) {
+      setUser(JSON.parse(userData))
+    }
+  }, [])
 
   const handleCommentAdded = (newComment) => {
     setComments(prev => [newComment, ...prev])
+  }
+
+  const handleCommentUpdated = (updatedComment) => {
+    setComments(prev => prev.map(c => c.id === updatedComment.id ? updatedComment : c))
+  }
+
+  const handleCommentDeleted = (commentId) => {
+    setComments(prev => prev.filter(c => c.id !== commentId))
   }
 
   useEffect(() => {
@@ -32,9 +51,11 @@ export default function BlogDetail() {
             title: blogData.title,
             content: blogData.content,
             author: blogData.author_name,
+            authorId: blogData.author_id,
             category: blogData.category_name,
             createdAt: blogData.created_at,
-            updatedAt: blogData.updated_at
+            updatedAt: blogData.updated_at,
+            viewCount: blogData.view_count
           });
         } else if (data && data.id) {
           // Direkt blog objesi gelmişse
@@ -77,6 +98,10 @@ export default function BlogDetail() {
 
   const minutes = useMemo(() => estimateReadingMinutes(blog?.content), [blog])
 
+  const isAuthor = () => {
+    return user && blog && user.id === blog.authorId
+  }
+
   if (loading) {
     return (
       <div className="detail">
@@ -100,15 +125,25 @@ export default function BlogDetail() {
 
   return (
     <div className="detail">
+      {/* View Counter - görünmez component */}
+      <ViewCounter blogId={blog.id} />
+      
       <div className="detail-topbar">
         <Link to="/" className="read-btn">← Listeye dön</Link>
+        {isAuthor() && (
+          <Link to={`/blog/${blog.id}/edit`} className="edit-btn">
+            ✏️ Düzenle
+          </Link>
+        )}
       </div>
+      
       <div className="detail-cover" style={{ '--h': hueBase }} />
       <h1 style={{ marginBottom: 8 }}>{blog.title}</h1>
       <div className="detail-meta">
         <span>{blog.author}</span>
         {blog.createdAt && <time>· {new Date(blog.createdAt).toLocaleDateString()}</time>}
         <span>· {minutes} dk okuma</span>
+        {blog.viewCount && <span>· 👁️ {blog.viewCount} görüntüleme</span>}
         {blog.category && <span className="pill" style={{ marginLeft: 8 }}>{blog.category}</span>}
       </div>
       <article className="detail-content">
@@ -129,13 +164,12 @@ export default function BlogDetail() {
         ) : (
           <div className="comments">
             {comments.map((c) => (
-              <div key={c.id ?? `${c.author}-${c.content}`} className="comment-item">
-                <div className="comment-header">
-                  <span className="comment-author">{c.author ?? 'Anonim'}</span>
-                  {c.createdAt && <time className="comment-time">{new Date(c.createdAt).toLocaleString()}</time>}
-                </div>
-                <p className="comment-content">{c.content ?? c.text}</p>
-              </div>
+              <CommentItem
+                key={c.id}
+                comment={c}
+                onCommentUpdated={handleCommentUpdated}
+                onCommentDeleted={handleCommentDeleted}
+              />
             ))}
           </div>
         )}
