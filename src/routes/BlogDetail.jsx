@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import { API_ENDPOINTS } from '../config/api'
+import CommentForm from '../component/CommentForm'
 
 function estimateReadingMinutes(text) {
   const words = String(text ?? '').trim().split(/\s+/).filter(Boolean).length
@@ -13,9 +15,13 @@ export default function BlogDetail() {
   const [comments, setComments] = useState([])
   const [loadingComments, setLoadingComments] = useState(true)
 
+  const handleCommentAdded = (newComment) => {
+    setComments(prev => [newComment, ...prev])
+  }
+
   useEffect(() => {
     setLoading(true)
-    fetch(`http://localhost:3000/api/blogs/${id}`)
+    fetch(`${API_ENDPOINTS.BLOGS}/${id}`)
       .then((r) => r.json())
       .then((data) => {
         // API'den gelen veri yapısını kontrol et ve düzelt
@@ -48,7 +54,7 @@ export default function BlogDetail() {
 
   useEffect(() => {
     setLoadingComments(true)
-    fetch(`http://localhost:3000/api/blogs/${id}/comments`)
+    fetch(`${API_ENDPOINTS.BLOGS}/${id}/comments`)
       .then((r) => r.json())
       .then((data) => {
         // API'den gelen veri yapısını kontrol et ve düzelt
@@ -113,6 +119,9 @@ export default function BlogDetail() {
 
       <section className="comments-wrap" style={{ marginTop: 24 }}>
         <h3 className="comments-title">Yorumlar</h3>
+        
+        <CommentForm blogId={blog.id} onCommentAdded={handleCommentAdded} />
+        
         {loadingComments ? (
           <div className="comment-item skeleton" style={{ height: 64 }} />
         ) : !Array.isArray(comments) || comments.length === 0 ? (

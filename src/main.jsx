@@ -11,6 +11,7 @@ import About from './routes/About.jsx'
 import Write from './routes/Write.jsx'
 import Login from './routes/Login.jsx'
 import Register from './routes/Register.jsx'
+import Search from './routes/Search.jsx'
 
 const router = createBrowserRouter([
   { path: '/', element: <App /> },
@@ -22,6 +23,7 @@ const router = createBrowserRouter([
   { path: '/write', element: <Write /> },
   { path: '/login', element: <Login /> },
   { path: '/register', element: <Register /> },
+  { path: '/search', element: <Search /> },
 ])
 
 createRoot(document.getElementById('root')).render(

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { API_ENDPOINTS } from '../config/api';
 
 export default function BlogList() {
   const navigate = useNavigate();
@@ -19,7 +20,7 @@ export default function BlogList() {
       .replace(/ı/g, "i");
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/blogs")
+    fetch(API_ENDPOINTS.BLOGS)
       .then((res) => res.json())
       .then((data) => {
         // API'den gelen veri yapısını kontrol et ve düzelt

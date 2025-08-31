@@ -1,45 +1,39 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Navigation from '../component/Navigation'
+import { API_ENDPOINTS } from '../config/api'
 
 export default function Trending() {
   const [trendingBlogs, setTrendingBlogs] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Simulate trending blogs (in real app, this would be an API call)
-    setTimeout(() => {
-      setTrendingBlogs([
-        {
-          id: 1,
-          title: "React 19'da Yeni Özellikler",
-          author: "Ahmet Yılmaz",
-          category: "Teknoloji",
-          views: 15420,
-          likes: 892,
-          createdAt: "2024-01-15"
-        },
-        {
-          id: 2,
-          title: "Modern Web Tasarım Trendleri 2024",
-          author: "Zeynep Kaya",
-          category: "Tasarım",
-          views: 12850,
-          likes: 756,
-          createdAt: "2024-01-14"
-        },
-        {
-          id: 3,
-          title: "Yapay Zeka ve Geleceğimiz",
-          author: "Mehmet Demir",
-          category: "Bilim",
-          views: 9870,
-          likes: 634,
-          createdAt: "2024-01-13"
+    // Popüler blogları API'den al
+    fetch(`${API_ENDPOINTS.BLOGS}/popular?limit=10`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && data.success && Array.isArray(data.data)) {
+          const transformedBlogs = data.data.map(blog => ({
+            id: blog.id,
+            title: blog.title,
+            author: blog.author_name || blog.author,
+            category: blog.category_name || blog.category,
+            views: blog.view_count || 0,
+            likes: blog.like_count || 0,
+            createdAt: blog.created_at || blog.createdAt
+          }));
+          setTrendingBlogs(transformedBlogs);
+        } else {
+          console.error("API'den beklenmeyen veri formatı:", data);
+          setTrendingBlogs([]);
         }
-      ])
-      setLoading(false)
-    }, 1000)
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Trend yazılar çekerken hata:', err);
+        setTrendingBlogs([]);
+        setLoading(false);
+      });
   }, [])
 
   if (loading) {

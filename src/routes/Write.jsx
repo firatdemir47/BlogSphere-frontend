@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navigation from '../component/Navigation'
-import { categories as predefinedCategories } from '../data/categories'
+import { API_ENDPOINTS } from '../config/api'
 
 export default function Write() {
   const navigate = useNavigate()
@@ -16,7 +16,7 @@ export default function Write() {
 
   useEffect(() => {
     // API'den kategorileri al
-    fetch('http://localhost:3000/api/categories')
+    fetch(API_ENDPOINTS.CATEGORIES)
       .then(res => res.json())
       .then(data => {
         if (data && data.success && Array.isArray(data.data)) {
@@ -51,7 +51,7 @@ export default function Write() {
         throw new Error('Geçerli bir kategori seçin')
       }
 
-      const res = await fetch('http://localhost:3000/api/blogs', {
+      const res = await fetch(API_ENDPOINTS.BLOGS, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',

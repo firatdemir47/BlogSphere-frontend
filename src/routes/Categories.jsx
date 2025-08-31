@@ -1,55 +1,36 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Navigation from '../component/Navigation'
-import { categories as predefinedCategories } from '../data/categories'
+import { API_ENDPOINTS, getCategoryConfig } from '../config/api'
 
 export default function Categories() {
   const [selectedCategory, setSelectedCategory] = useState(null)
-  const [blogs, setBlogs] = useState([])
+  const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
 
-  const categories = predefinedCategories
-
-  // Blog verilerini çek ve kategori sayılarını hesapla
+  // Kategorileri API'den al
   useEffect(() => {
-    fetch('http://localhost:3000/api/blogs')
+    fetch(API_ENDPOINTS.CATEGORIES + '/with-blog-count')
       .then((res) => res.json())
       .then((data) => {
-        // API'den gelen veri yapısını kontrol et ve düzelt
         if (data && data.success && Array.isArray(data.data)) {
-          // API'den gelen veriyi dönüştür
-          const transformedBlogs = data.data.map(blog => ({
-            id: blog.id,
-            title: blog.title,
-            content: blog.content,
-            author: blog.author_name,
-            category: blog.category_name,
-            createdAt: blog.created_at,
-            updatedAt: blog.updated_at
-          }));
-          setBlogs(transformedBlogs);
-        } else if (Array.isArray(data)) {
-          setBlogs(data);
+          setCategories(data.data);
         } else {
           console.error("API'den beklenmeyen veri formatı:", data);
-          setBlogs([]);
+          setCategories([]);
         }
         setLoading(false);
       })
       .catch((err) => {
-        console.error('Blogları çekerken hata:', err)
-        setBlogs([]);
+        console.error('Kategoriler çekerken hata:', err)
+        setCategories([]);
         setLoading(false);
       })
   }, [])
 
   // Her kategorideki yazı sayısını hesapla
-  const getCategoryCount = (categoryName) => {
-    // blogs array olduğundan emin ol
-    if (!Array.isArray(blogs)) {
-      return 0;
-    }
-    return blogs.filter(blog => blog.category === categoryName).length
+  const getCategoryCount = (category) => {
+    return category.blog_count || 0;
   }
 
   const filteredCategories = selectedCategory 
@@ -76,23 +57,30 @@ export default function Categories() {
         </div>
 
         <div className="categories-grid">
-          {filteredCategories.map((category) => (
-            <div key={category.name} className="category-card" style={{ '--category-color': category.color }}>
-              <div className="category-icon">{category.icon}</div>
-              <div className="category-content">
-                <h3 className="category-name">{category.name}</h3>
-                <p className="category-description">{category.description}</p>
-                <div className="category-footer">
-                  <span className="category-count">
-                    {loading ? '...' : `${getCategoryCount(category.name)} yazı`}
-                  </span>
-                  <Link to={`/category/${encodeURIComponent(category.name)}`} className="category-link">
-                    Görüntüle →
-                  </Link>
+          {filteredCategories.map((category) => {
+            // Veritabanından gelen icon ve color varsa onları kullan, yoksa mapping'den al
+            const config = category.icon && category.color 
+              ? { icon: category.icon, color: category.color }
+              : getCategoryConfig(category.name)
+            
+            return (
+              <div key={category.id || category.name} className="category-card" style={{ '--category-color': config.color }}>
+                <div className="category-icon">{config.icon}</div>
+                <div className="category-content">
+                  <h3 className="category-name">{category.name}</h3>
+                  <p className="category-description">{category.description || 'Kategori açıklaması'}</p>
+                  <div className="category-footer">
+                    <span className="category-count">
+                      {loading ? '...' : `${getCategoryCount(category)} yazı`}
+                    </span>
+                    <Link to={`/category/${encodeURIComponent(category.name)}`} className="category-link">
+                      Görüntüle →
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
 
         {filteredCategories.length === 0 && (

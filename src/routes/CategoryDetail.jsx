@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import Navigation from '../component/Navigation'
-import { categories as predefinedCategories } from '../data/categories'
+import { API_ENDPOINTS, getCategoryConfig } from '../config/api'
 
 export default function CategoryDetail() {
   const { categoryName } = useParams()
@@ -11,33 +11,33 @@ export default function CategoryDetail() {
   const [category, setCategory] = useState(null)
 
   useEffect(() => {
-    // Kategori bilgisini bul
-    const foundCategory = predefinedCategories.find(cat => cat.name === categoryName)
-    if (foundCategory) {
-      setCategory(foundCategory)
-    }
-
-    // Bu kategorideki blogları çek
-    fetch('http://localhost:3000/api/blogs')
+    // Kategori bilgisini API'den al
+    fetch(`${API_ENDPOINTS.CATEGORIES}?name=${encodeURIComponent(categoryName)}`)
       .then((res) => res.json())
       .then((data) => {
-        // API'den gelen veri yapısını kontrol et ve düzelt
+        if (data && data.success && data.data) {
+          setCategory(data.data)
+        }
+      })
+      .catch((err) => {
+        console.error('Kategori bilgisi alınırken hata:', err)
+      })
+
+    // Bu kategorideki blogları çek
+    fetch(`${API_ENDPOINTS.BLOGS}/category/${encodeURIComponent(categoryName)}`)
+      .then((res) => res.json())
+      .then((data) => {
         if (data && data.success && Array.isArray(data.data)) {
-          // API'den gelen veriyi dönüştür
           const transformedBlogs = data.data.map(blog => ({
             id: blog.id,
             title: blog.title,
             content: blog.content,
-            author: blog.author_name,
-            category: blog.category_name,
-            createdAt: blog.created_at,
-            updatedAt: blog.updated_at
+            author: blog.author_name || blog.author,
+            category: blog.category_name || blog.category,
+            createdAt: blog.created_at || blog.createdAt,
+            updatedAt: blog.updated_at || blog.updatedAt
           }));
-          const filteredBlogs = transformedBlogs.filter(blog => blog.category === categoryName)
-          setBlogs(filteredBlogs)
-        } else if (Array.isArray(data)) {
-          const filteredBlogs = data.filter(blog => blog.category === categoryName)
-          setBlogs(filteredBlogs)
+          setBlogs(transformedBlogs)
         } else {
           console.error("API'den beklenmeyen veri formatı:", data);
           setBlogs([])
@@ -74,7 +74,7 @@ export default function CategoryDetail() {
       <div className="category-detail-page">
         <div className="category-header">
           <div className="category-info">
-            <div className="category-icon">{category.icon}</div>
+            <div className="category-icon">{category.icon || getCategoryConfig(category.name).icon}</div>
             <div>
               <h1>{category.name}</h1>
               <p>{category.description}</p>
