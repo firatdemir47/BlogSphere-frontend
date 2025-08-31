@@ -24,7 +24,7 @@ export default function CategoryDetail() {
       })
 
     // Bu kategorideki blogları çek
-    fetch(`${API_ENDPOINTS.BLOGS}/category/${encodeURIComponent(categoryName)}`)
+    fetch(`${API_ENDPOINTS.BLOGS}/category-name/${encodeURIComponent(categoryName)}`)
       .then((res) => res.json())
       .then((data) => {
         if (data && data.success && Array.isArray(data.data)) {
