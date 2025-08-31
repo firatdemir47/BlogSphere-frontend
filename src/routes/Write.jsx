@@ -15,9 +15,23 @@ export default function Write() {
   const [loadingCategories, setLoadingCategories] = useState(true)
 
   useEffect(() => {
-    // Use the same categories as the Categories page
-    setCategories(predefinedCategories)
-    setLoadingCategories(false)
+    // API'den kategorileri al
+    fetch('http://localhost:3000/api/categories')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.success && Array.isArray(data.data)) {
+          setCategories(data.data)
+        } else {
+          console.error('Kategoriler yüklenirken hata:', data)
+          setCategories([])
+        }
+        setLoadingCategories(false)
+      })
+      .catch(err => {
+        console.error('Kategoriler çekilirken hata:', err)
+        setCategories([])
+        setLoadingCategories(false)
+      })
   }, [])
 
   async function handleSubmit(e) {
@@ -25,12 +39,36 @@ export default function Write() {
     setSubmitting(true)
     setError('')
     try {
+      // Token'ı al
+      const token = localStorage.getItem('token')
+      if (!token) {
+        throw new Error('Giriş yapmanız gerekiyor')
+      }
+
+      // Kategori ID'sini bul
+      const selectedCategory = categories.find(c => c.name === category)
+      if (!selectedCategory) {
+        throw new Error('Geçerli bir kategori seçin')
+      }
+
       const res = await fetch('http://localhost:3000/api/blogs', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, content, author, category })
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ 
+          title, 
+          content, 
+          categoryId: selectedCategory.id 
+        })
       })
-      if (!res.ok) throw new Error('Kaydetme başarısız')
+      
+      if (!res.ok) {
+        const errorData = await res.json()
+        throw new Error(errorData.error || 'Kaydetme başarısız')
+      }
+      
       const created = await res.json()
       navigate(`/category/${encodeURIComponent(category)}`)
     } catch (err) {
