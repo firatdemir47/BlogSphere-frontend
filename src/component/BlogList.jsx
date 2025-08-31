@@ -29,10 +29,10 @@ export default function BlogList() {
             id: blog.id,
             title: blog.title,
             content: blog.content,
-            author: blog.author_name,
-            category: blog.category_name,
-            createdAt: blog.created_at,
-            updatedAt: blog.updated_at
+            author: blog.author_name || blog.author,
+            category: blog.category_name || blog.category,
+            createdAt: blog.created_at || blog.createdAt,
+            updatedAt: blog.updated_at || blog.updatedAt
           }));
           setBlogs(transformedBlogs);
         } else {
