@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate, Link, useLocation } from 'react-router-dom'
 import Navigation from '../component/Navigation'
+import { API_ENDPOINTS } from '../config/api'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -25,8 +26,23 @@ export default function Login() {
     setLoading(true)
     setError('')
 
+    // Form validation
+    if (!formData.email.trim() || !formData.password) {
+      setError('Email ve şifre gerekli')
+      setLoading(false)
+      return
+    }
+
+    // Email format kontrolü
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(formData.email)) {
+      setError('Geçerli bir email adresi girin')
+      setLoading(false)
+      return
+    }
+
     try {
-      const response = await fetch('http://localhost:3000/api/auth/login', {
+      const response = await fetch(API_ENDPOINTS.AUTH + '/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -39,7 +55,11 @@ export default function Login() {
       if (response.ok) {
         // Token'ı localStorage'a kaydet
         localStorage.setItem('token', data.token)
-        localStorage.setItem('user', JSON.stringify(data.user))
+        
+        // User bilgisini güvenli şekilde kaydet
+        if (data.user) {
+          localStorage.setItem('user', JSON.stringify(data.user))
+        }
         
         // Ana sayfaya yönlendir
         navigate('/')
