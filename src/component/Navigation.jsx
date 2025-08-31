@@ -10,14 +10,8 @@ export default function Navigation() {
   useEffect(() => {
     // LocalStorage'dan kullanıcı bilgisini al
     const userData = localStorage.getItem('user')
-    if (userData && userData !== 'undefined' && userData !== 'null') {
-      try {
-        setUser(JSON.parse(userData))
-      } catch (error) {
-        console.error('User data parse error:', error)
-        localStorage.removeItem('user')
-        setUser(null)
-      }
+    if (userData) {
+      setUser(JSON.parse(userData))
     }
   }, [])
 
@@ -73,10 +67,14 @@ export default function Navigation() {
                 <span className="write-text">Yaz</span>
               </Link>
               <div className="user-menu">
-                <span className="user-name">👤 {user.username || user.name || 'Kullanıcı'}</span>
-                <button onClick={handleLogout} className="logout-btn">
-                  Çıkış
-                </button>
+                <span className="user-name">👤 {user.first_name || user.username}</span>
+                <div className="user-dropdown">
+                  <Link to="/profile" className="dropdown-item">Profil</Link>
+                  <Link to="/my-comments" className="dropdown-item">Yorumlarım</Link>
+                  <button onClick={handleLogout} className="dropdown-item logout-btn">
+                    Çıkış
+                  </button>
+                </div>
               </div>
             </>
           ) : (
@@ -117,7 +115,9 @@ export default function Navigation() {
           
           {user ? (
             <div className="mobile-user-menu">
-              <span className="mobile-user-name">👤 {user.username || user.name || 'Kullanıcı'}</span>
+              <span className="mobile-user-name">👤 {user.first_name || user.username}</span>
+              <Link to="/profile" className="mobile-nav-item">Profil</Link>
+              <Link to="/my-comments" className="mobile-nav-item">Yorumlarım</Link>
               <button onClick={handleLogout} className="mobile-logout-btn">
                 Çıkış Yap
               </button>
