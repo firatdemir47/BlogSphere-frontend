@@ -10,8 +10,14 @@ export default function Navigation() {
   useEffect(() => {
     // LocalStorage'dan kullanıcı bilgisini al
     const userData = localStorage.getItem('user')
-    if (userData) {
-      setUser(JSON.parse(userData))
+    if (userData && userData !== 'undefined' && userData !== 'null') {
+      try {
+        setUser(JSON.parse(userData))
+      } catch (error) {
+        console.error('User data parse error:', error)
+        localStorage.removeItem('user')
+        setUser(null)
+      }
     }
   }, [])
 
@@ -26,6 +32,7 @@ export default function Navigation() {
     { path: '/', label: 'Ana Sayfa', icon: '🏠' },
     { path: '/trending', label: 'Trend', icon: '🔥' },
     { path: '/categories', label: 'Kategoriler', icon: '📚' },
+    { path: '/search', label: 'Arama', icon: '🔍' },
     { path: '/about', label: 'Hakkında', icon: 'ℹ️' }
   ]
 
@@ -66,7 +73,7 @@ export default function Navigation() {
                 <span className="write-text">Yaz</span>
               </Link>
               <div className="user-menu">
-                <span className="user-name">👤 {user.name}</span>
+                <span className="user-name">👤 {user.username || user.name || 'Kullanıcı'}</span>
                 <button onClick={handleLogout} className="logout-btn">
                   Çıkış
                 </button>
@@ -110,7 +117,7 @@ export default function Navigation() {
           
           {user ? (
             <div className="mobile-user-menu">
-              <span className="mobile-user-name">👤 {user.name}</span>
+              <span className="mobile-user-name">👤 {user.username || user.name || 'Kullanıcı'}</span>
               <button onClick={handleLogout} className="mobile-logout-btn">
                 Çıkış Yap
               </button>
