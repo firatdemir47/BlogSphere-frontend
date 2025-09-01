@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import NotificationBell from './NotificationBell'
 
 export default function Navigation() {
   const location = useLocation()
@@ -59,6 +60,8 @@ export default function Navigation() {
           <button className="theme-toggle" onClick={() => document.body.classList.toggle('light-theme')}>
             🌙
           </button>
+          
+          {user && <NotificationBell />}
           
           {user ? (
             <>
