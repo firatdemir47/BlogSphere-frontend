@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { API_ENDPOINTS } from '../config/api';
+import ReactionButtons from './ReactionButtons';
+import BookmarkButton from './BookmarkButton';
 
 export default function BlogList() {
   const navigate = useNavigate();
@@ -33,7 +35,10 @@ export default function BlogList() {
             author: blog.author_name || blog.author,
             category: blog.category_name || blog.category,
             createdAt: blog.created_at || blog.createdAt,
-            updatedAt: blog.updated_at || blog.updatedAt
+            updatedAt: blog.updated_at || blog.updatedAt,
+            likeCount: blog.like_count || 0,
+            dislikeCount: blog.dislike_count || 0,
+            bookmarkCount: blog.bookmark_count || 0
           }));
           setBlogs(transformedBlogs);
         } else {
@@ -160,6 +165,18 @@ export default function BlogList() {
                   <span className="read-btn" role="presentation">Oku</span>
                 </div>
               </button>
+              
+              {/* Reaction ve Bookmark butonları */}
+              <div className="blog-actions">
+                <ReactionButtons 
+                  blogId={blog.id} 
+                  initialReactions={{ 
+                    likeCount: blog.likeCount, 
+                    dislikeCount: blog.dislikeCount 
+                  }} 
+                />
+                <BookmarkButton blogId={blog.id} />
+              </div>
             </article>
           ))}
         </div>
