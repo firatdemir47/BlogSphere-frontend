@@ -24,7 +24,12 @@ export const API_ENDPOINTS = {
   AUTH: `${API_BASE_URL}/auth`,
   CATEGORIES: `${API_BASE_URL}/categories`,
   COMMENTS: `${API_BASE_URL}/comments`,
-  HEALTH: `${API_BASE_URL}/health`
+  HEALTH: `${API_BASE_URL}/health`,
+  // Yeni endpoint'ler
+  REACTIONS: `${API_BASE_URL}/reactions`,
+  BOOKMARKS: `${API_BASE_URL}/bookmarks`,
+  TAGS: `${API_BASE_URL}/tags`,
+  NOTIFICATIONS: `${API_BASE_URL}/notifications`
 }
 
 export default API_BASE_URL

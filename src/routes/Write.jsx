@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Navigation from '../component/Navigation'
 import { API_ENDPOINTS } from '../config/api'
+import TagSelector from '../component/TagSelector'
 
 export default function Write() {
   const navigate = useNavigate()
@@ -9,6 +10,7 @@ export default function Write() {
   const [content, setContent] = useState('')
   const [author, setAuthor] = useState('')
   const [category, setCategory] = useState('')
+  const [selectedTags, setSelectedTags] = useState([])
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [categories, setCategories] = useState([])
@@ -130,6 +132,16 @@ export default function Write() {
             rows={12}
             required
           />
+          
+          {/* Tag Seçici */}
+          <div className="tag-section">
+            <h3>🏷️ Etiketler</h3>
+            <TagSelector 
+              selectedTags={selectedTags}
+              onTagsChange={setSelectedTags}
+            />
+          </div>
+          
           <div className="button-group">
             <button type="button" onClick={() => navigate(-1)} disabled={submitting}>Vazgeç</button>
             <button type="submit" disabled={submitting}>
