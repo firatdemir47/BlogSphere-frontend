@@ -4,6 +4,9 @@ import { API_ENDPOINTS } from '../config/api'
 import CommentForm from '../component/CommentForm'
 import CommentItem from '../component/CommentItem'
 import ViewCounter from '../component/ViewCounter'
+import ReactionButtons from '../component/ReactionButtons'
+import BookmarkButton from '../component/BookmarkButton'
+import TagSelector from '../component/TagSelector'
 
 function estimateReadingMinutes(text) {
   const words = String(text ?? '').trim().split(/\s+/).filter(Boolean).length
@@ -146,6 +149,19 @@ export default function BlogDetail() {
         {blog.viewCount && <span>· 👁️ {blog.viewCount} görüntüleme</span>}
         {blog.category && <span className="pill" style={{ marginLeft: 8 }}>{blog.category}</span>}
       </div>
+      
+      {/* Reaction ve Bookmark butonları */}
+      <div className="blog-actions">
+        <ReactionButtons 
+          blogId={blog.id} 
+          initialReactions={{ 
+            likeCount: blog.likeCount || 0, 
+            dislikeCount: blog.dislikeCount || 0 
+          }} 
+        />
+        <BookmarkButton blogId={blog.id} />
+      </div>
+      
       <article className="detail-content">
         {String(blog.content ?? '').split('\n').map((p, i) => (
           <p key={i}>{p}</p>
