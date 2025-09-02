@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import Navigation from '../component/Navigation'
 import { API_ENDPOINTS } from '../config/api'
 import TagSelector from '../component/TagSelector'
+import FileUpload from '../component/FileUpload'
 
 export default function Write() {
   const navigate = useNavigate()
@@ -11,6 +12,7 @@ export default function Write() {
   const [author, setAuthor] = useState('')
   const [category, setCategory] = useState('')
   const [selectedTags, setSelectedTags] = useState([])
+  const [blogImage, setBlogImage] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
   const [categories, setCategories] = useState([])
@@ -132,6 +134,15 @@ export default function Write() {
             rows={12}
             required
           />
+          
+          {/* Blog Resmi Yükleme */}
+          <div className="image-section">
+            <h3>🖼️ Blog Resmi</h3>
+            <FileUpload 
+              type="blog-image"
+              onUpload={setBlogImage}
+            />
+          </div>
           
           {/* Tag Seçici */}
           <div className="tag-section">
