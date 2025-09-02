@@ -122,6 +122,9 @@ export default function Login() {
                 className="auth-input"
                 placeholder="••••••••"
               />
+              <Link to="/password-reset" className="forgot-password">
+                Şifremi unuttum
+              </Link>
             </div>
 
             <button 
