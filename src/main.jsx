@@ -15,6 +15,7 @@ import Register from './routes/Register.jsx'
 import Profile from './routes/Profile.jsx'
 import Search from './routes/Search.jsx'
 import MyComments from './routes/MyComments.jsx'
+import PasswordReset from './routes/PasswordReset.jsx'
 
 const router = createBrowserRouter([
   { path: '/', element: <App /> },
@@ -30,6 +31,7 @@ const router = createBrowserRouter([
   { path: '/profile', element: <Profile /> },
   { path: '/search', element: <Search /> },
   { path: '/my-comments', element: <MyComments /> },
+  { path: '/password-reset', element: <PasswordReset /> },
 ])
 
 createRoot(document.getElementById('root')).render(
