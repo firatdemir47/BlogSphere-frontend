@@ -70,3 +70,4 @@ const BookmarkButton = ({ blogId, initialBookmarked = false }) => {
 }
 
 export default BookmarkButton
+
