@@ -86,22 +86,27 @@ export default function MyComments() {
             <div className="comments-list">
               {comments.map((comment) => (
                 <div key={comment.id} className="my-comment-item">
-                  <div className="comment-blog-info">
-                    <h3>
-                      <button 
-                        onClick={() => navigate(`/blog/${comment.blog_id}`)}
-                        className="blog-link"
-                      >
-                        {comment.blog_title || 'Blog Başlığı'}
-                      </button>
-                    </h3>
-                    <span className="comment-date">
-                      {new Date(comment.created_at).toLocaleDateString()}
-                    </span>
+                  <div className="comment-header">
+                    <div className="comment-blog-info">
+                      <h3 className="blog-title">
+                        <button 
+                          onClick={() => navigate(`/blog/${comment.blog_id}`)}
+                          className="blog-link"
+                        >
+                          📝 {comment.blog_title || 'Blog Başlığı'}
+                        </button>
+                      </h3>
+                      <span className="comment-date">
+                        📅 {new Date(comment.created_at).toLocaleDateString('tr-TR')}
+                      </span>
+                    </div>
                   </div>
                   
                   <div className="comment-content">
-                    <p>{comment.content}</p>
+                    <div className="comment-text">
+                      <span className="comment-label">💬 Yorumunuz:</span>
+                      <p>{comment.content}</p>
+                    </div>
                   </div>
                   
                   <div className="comment-actions">
@@ -109,7 +114,7 @@ export default function MyComments() {
                       onClick={() => navigate(`/blog/${comment.blog_id}`)}
                       className="view-blog-btn"
                     >
-                      Blog'u Görüntüle
+                      👁️ Blog'u Görüntüle
                     </button>
                   </div>
                 </div>

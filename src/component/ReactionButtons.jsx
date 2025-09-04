@@ -73,6 +73,13 @@ const ReactionButtons = ({ blogId, initialReactions = { likeCount: 0, dislikeCou
           }
           setUserReaction(reactionType)
         }
+      } else {
+        const errorData = await response.json()
+        if (errorData.message && errorData.message.includes('maksimum')) {
+          alert(errorData.message)
+        } else {
+          alert('Beğeni işlemi başarısız')
+        }
       }
     } catch (error) {
       console.error('Reaction error:', error)

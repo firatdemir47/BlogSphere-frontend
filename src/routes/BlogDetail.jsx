@@ -58,7 +58,10 @@ export default function BlogDetail() {
             category: blogData.category_name,
             createdAt: blogData.created_at,
             updatedAt: blogData.updated_at,
-            viewCount: blogData.view_count
+            viewCount: blogData.view_count,
+            likeCount: blogData.like_count || 0,
+            dislikeCount: blogData.dislike_count || 0,
+            bookmarkCount: blogData.bookmark_count || 0
           });
         } else if (data && data.id) {
           // Direkt blog objesi gelmişse
@@ -155,8 +158,8 @@ export default function BlogDetail() {
         <ReactionButtons 
           blogId={blog.id} 
           initialReactions={{ 
-            likeCount: blog.likeCount || 0, 
-            dislikeCount: blog.dislikeCount || 0 
+            likeCount: parseInt(blog.likeCount) || 0, 
+            dislikeCount: parseInt(blog.dislikeCount) || 0 
           }} 
         />
         <BookmarkButton blogId={blog.id} />

@@ -171,8 +171,8 @@ export default function BlogList() {
                 <ReactionButtons 
                   blogId={blog.id} 
                   initialReactions={{ 
-                    likeCount: blog.likeCount, 
-                    dislikeCount: blog.dislikeCount 
+                    likeCount: parseInt(blog.likeCount) || 0, 
+                    dislikeCount: parseInt(blog.dislikeCount) || 0 
                   }} 
                 />
                 <BookmarkButton blogId={blog.id} />
