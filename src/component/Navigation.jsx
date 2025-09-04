@@ -72,10 +72,17 @@ export default function Navigation() {
               <div className="user-menu">
                 <span className="user-name">👤 {user.first_name || user.username}</span>
                 <div className="user-dropdown">
-                  <Link to="/profile" className="dropdown-item">Profil</Link>
-                  <Link to="/my-comments" className="dropdown-item">Yorumlarım</Link>
+                  <Link to="/profile" className="dropdown-item">
+                    <span className="dropdown-icon">👤</span>
+                    <span className="dropdown-text">Profil</span>
+                  </Link>
+                  <Link to="/my-comments" className="dropdown-item">
+                    <span className="dropdown-icon">💬</span>
+                    <span className="dropdown-text">Yorumlarım</span>
+                  </Link>
                   <button onClick={handleLogout} className="dropdown-item logout-btn">
-                    Çıkış
+                    <span className="dropdown-icon">🚪</span>
+                    <span className="dropdown-text">Çıkış</span>
                   </button>
                 </div>
               </div>
