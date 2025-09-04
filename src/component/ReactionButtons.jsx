@@ -50,29 +50,18 @@ const ReactionButtons = ({ blogId, initialReactions = { likeCount: 0, dislikeCou
 
       if (response.ok) {
         const data = await response.json()
+        console.log('Reaction response:', data) // Debug için
         
-        // Reaction sayılarını güncelle
-        if (data.action === 'removed') {
-          if (reactionType === 'like') {
-            setReactions(prev => ({ ...prev, likeCount: Math.max(0, prev.likeCount - 1) }))
-          } else {
-            setReactions(prev => ({ ...prev, dislikeCount: Math.max(0, prev.dislikeCount - 1) }))
-          }
-          setUserReaction(null)
-        } else {
-          if (reactionType === 'like') {
-            setReactions(prev => ({ ...prev, likeCount: prev.likeCount + 1 }))
-            if (userReaction === 'dislike') {
-              setReactions(prev => ({ ...prev, dislikeCount: Math.max(0, prev.dislikeCount - 1) }))
-            }
-          } else {
-            setReactions(prev => ({ ...prev, dislikeCount: prev.dislikeCount + 1 }))
-            if (userReaction === 'like') {
-              setReactions(prev => ({ ...prev, likeCount: Math.max(0, prev.likeCount - 1) }))
-            }
-          }
-          setUserReaction(reactionType)
+        // Backend'den gelen güncel reaction sayılarını kullan
+        if (data.data && data.data.reactions) {
+          setReactions({
+            likeCount: data.data.reactions.likeCount || 0,
+            dislikeCount: data.data.reactions.dislikeCount || 0
+          })
         }
+        
+        // User reaction'ı güncelle
+        setUserReaction(data.data?.userReaction || null)
       } else {
         const errorData = await response.json()
         if (errorData.message && errorData.message.includes('maksimum')) {

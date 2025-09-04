@@ -41,7 +41,10 @@ const TagSelector = ({ selectedTags = [], onTagsChange, blogId }) => {
     }
   }
 
-  const handleTagToggle = (tagName) => {
+  const handleTagToggle = (tagName, e) => {
+    e.preventDefault() // Form submit'i engelle
+    e.stopPropagation() // Event bubbling'i engelle
+    
     const newSelectedTags = selectedTagNames.includes(tagName)
       ? selectedTagNames.filter(name => name !== tagName)
       : [...selectedTagNames, tagName]
@@ -82,14 +85,22 @@ const TagSelector = ({ selectedTags = [], onTagsChange, blogId }) => {
     <div className="tag-selector">
       <div className="tags-list">
         {tags.map(tag => (
-          <button
+          <div
             key={tag.id}
             className={`tag-item ${selectedTagNames.includes(tag.name) ? 'selected' : ''}`}
-            onClick={() => handleTagToggle(tag.name)}
+            onClick={(e) => handleTagToggle(tag.name, e)}
             style={{ backgroundColor: selectedTagNames.includes(tag.name) ? tag.color : 'transparent' }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                handleTagToggle(tag.name, e)
+              }
+            }}
           >
             {tag.name}
-          </button>
+          </div>
         ))}
       </div>
       
