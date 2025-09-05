@@ -80,6 +80,10 @@ export default function Navigation() {
                     <span className="dropdown-icon">💬</span>
                     <span className="dropdown-text">Yorumlarım</span>
                   </Link>
+                  <Link to="/bookmarks" className="dropdown-item">
+                    <span className="dropdown-icon">📚</span>
+                    <span className="dropdown-text">Bookmark'larım</span>
+                  </Link>
                   <button onClick={handleLogout} className="dropdown-item logout-btn">
                     <span className="dropdown-icon">🚪</span>
                     <span className="dropdown-text">Çıkış</span>
@@ -128,6 +132,7 @@ export default function Navigation() {
               <span className="mobile-user-name">👤 {user.first_name || user.username}</span>
               <Link to="/profile" className="mobile-nav-item">Profil</Link>
               <Link to="/my-comments" className="mobile-nav-item">Yorumlarım</Link>
+              <Link to="/bookmarks" className="mobile-nav-item">Bookmark'larım</Link>
               <button onClick={handleLogout} className="mobile-logout-btn">
                 Çıkış Yap
               </button>
