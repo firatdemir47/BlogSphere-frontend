@@ -64,7 +64,8 @@ export default function Write() {
         body: JSON.stringify({ 
           title, 
           content, 
-          categoryId: selectedCategory.id 
+          categoryId: selectedCategory.id,
+          tags: selectedTags
         })
       })
       
@@ -74,6 +75,27 @@ export default function Write() {
       }
       
       const created = await res.json()
+      
+      // Etiketleri blog'a ekle
+      if (selectedTags.length > 0 && created.data && created.data.id) {
+        try {
+          const tagRes = await fetch(`${API_ENDPOINTS.TAGS}/blogs/${created.data.id}/tags`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ tags: selectedTags })
+          })
+          
+          if (!tagRes.ok) {
+            console.warn('Etiketler eklenemedi:', await tagRes.text())
+          }
+        } catch (tagError) {
+          console.warn('Etiket ekleme hatası:', tagError)
+        }
+      }
+      
       navigate(`/category/${encodeURIComponent(category)}`)
     } catch (err) {
       setError(err.message || 'Bir hata oluştu')
