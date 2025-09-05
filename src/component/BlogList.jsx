@@ -38,7 +38,8 @@ export default function BlogList() {
             updatedAt: blog.updated_at || blog.updatedAt,
             likeCount: blog.like_count || 0,
             dislikeCount: blog.dislike_count || 0,
-            bookmarkCount: blog.bookmark_count || 0
+            bookmarkCount: blog.bookmark_count || 0,
+            tags: blog.tags || []
           }));
           setBlogs(transformedBlogs);
         } else {
@@ -160,6 +161,25 @@ export default function BlogList() {
                 </div>
                 <h3 className="blog-title">{blog.title}</h3>
                 <p className="blog-content blog-excerpt">{blog.content}</p>
+                
+                {/* Etiketler */}
+                {blog.tags && blog.tags.length > 0 && (
+                  <div className="blog-tags">
+                    {blog.tags.slice(0, 3).map(tag => (
+                      <span 
+                        key={tag.id} 
+                        className="tag" 
+                        style={{ backgroundColor: tag.color || '#e0e0e0' }}
+                      >
+                        {tag.name}
+                      </span>
+                    ))}
+                    {blog.tags.length > 3 && (
+                      <span className="tag-more">+{blog.tags.length - 3}</span>
+                    )}
+                  </div>
+                )}
+                
                 <div className="blog-footer">
                   <span className="blog-author">Yazar: {blog.author}</span>
                   <span className="read-btn" role="presentation">Oku</span>
