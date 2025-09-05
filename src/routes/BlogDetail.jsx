@@ -61,7 +61,8 @@ export default function BlogDetail() {
             viewCount: blogData.view_count,
             likeCount: blogData.like_count || 0,
             dislikeCount: blogData.dislike_count || 0,
-            bookmarkCount: blogData.bookmark_count || 0
+            bookmarkCount: blogData.bookmark_count || 0,
+            tags: blogData.tags || []
           });
         } else if (data && data.id) {
           // Direkt blog objesi gelmişse
@@ -152,6 +153,21 @@ export default function BlogDetail() {
         {blog.viewCount && <span>· 👁️ {blog.viewCount} görüntüleme</span>}
         {blog.category && <span className="pill" style={{ marginLeft: 8 }}>{blog.category}</span>}
       </div>
+      
+      {/* Etiketler */}
+      {blog.tags && blog.tags.length > 0 && (
+        <div className="blog-tags" style={{ marginTop: 15 }}>
+          {blog.tags.map(tag => (
+            <span 
+              key={tag.id} 
+              className="tag" 
+              style={{ backgroundColor: tag.color || '#e0e0e0' }}
+            >
+              {tag.name}
+            </span>
+          ))}
+        </div>
+      )}
       
       {/* Reaction ve Bookmark butonları */}
       <div className="blog-actions">
